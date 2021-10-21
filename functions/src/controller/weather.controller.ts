@@ -21,6 +21,10 @@ export async function getWeather(
 
     const json = await parse(xml);
 
+    if (!json.cidades.cidade) {
+      return "false";
+    }
+
     const id = json.cidades.cidade.id;
     return id;
   }
@@ -39,11 +43,35 @@ export async function getWeather(
   }
 
   const cityId = (await getCityId(city)) as string;
+
+  if (cityId == "false") {
+    return res.status(200).send({
+      followupEventInput: {
+        name: "erroIdCity",
+        languageCode: "pt-BR",
+        parameters: {
+          error: "error",
+        },
+      },
+    });
+  }
+
   const weatherPrevision = await getWeatherPrevision(cityId);
 
   const { cidade }: City = weatherPrevision;
 
   const { nome, atualizacao, previsao } = cidade;
+
+  const newDate = new Date(atualizacao).toLocaleDateString();
+
+  const previsionList = previsao.map((doc) => {
+    const newDate = new Date(doc.dia).toLocaleDateString();
+    return `\r\nData: ${newDate} \r\nMaxima: ${doc.maxima}ºC ${
+      doc.maxima < "15" ? "🥶" : "🥵"
+    }  \r\nMinima: ${doc.minima}ºC ${doc.minima < "15" ? "🥶" : "🥵"} \r\n`;
+  });
+
+  const str = await previsionList.toString().replace(/,/g, "");
 
   return res.status(200).send({
     followupEventInput: {
@@ -51,9 +79,11 @@ export async function getWeather(
       languageCode: "pt-BR",
       parameters: {
         nameCity: nome,
-        lastUpdate: atualizacao,
-        previsoes: previsao,
+        lastUpdate: newDate,
+        previsoes: str,
       },
     },
   });
+
+  next();
 }
