@@ -12,7 +12,13 @@ export async function getCityId(city: string) {
   if (!json.cidades.cidade) {
     return "false";
   }
-  const id = json.cidades.cidade[0].id;
+
+  if (json.cidades.cidade.length > 0) {
+    const id = json.cidades.cidade[0].id;
+    return id;
+  }
+
+  const id = json.cidades.cidade.id;
   return id;
 }
 
