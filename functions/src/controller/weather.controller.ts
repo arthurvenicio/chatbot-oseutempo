@@ -35,7 +35,7 @@ export async function getWeather(
   const newDate = new Date(atualizacao).toLocaleDateString("en-GB");
 
   const previsionList = previsao.map((doc) => {
-    const newDate = new Date(doc.dia).toLocaleDateString();
+    const newDate = new Date(doc.dia).toLocaleDateString("en-GB");
     return `\r\nData: ${newDate} \r\nMaxima: ${doc.maxima}ºC ${
       doc.maxima <= "20" ? "🥶" : "🥵"
     }  \r\nMinima: ${doc.minima}ºC ${doc.minima <= "20" ? "🥶" : "🥵"} \r\n`;
