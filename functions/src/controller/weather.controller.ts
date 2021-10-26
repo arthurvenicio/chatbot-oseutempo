@@ -10,8 +10,10 @@ export async function getWeather(
   next: NextFunction
 ) {
   const body: RequestDialog = req.body;
+  const name = body.queryResult.parameters.name.name;
   const city = body.queryResult.parameters.city;
 
+  console.log(name);
   const cityId = (await getCityId(city)) as string;
 
   if (cityId == "false") {
